@@ -15,7 +15,35 @@
     <canvas id="myCanvas" width="480" height="320" ></canvas>
     
     <script>
-        
+        var canvas = document.getElementById("myCanvas");
+        //ctx è lo strumento per disegnare sul canvas
+        var ctx = canvas.getContext("2d");
+
+        //variabili per posizionare il disegno
+        var x = canvas.width/2;
+        var y = canvas.height-30;
+        //variabili per aggiornare la posizione del disegno
+        var dx = 2;
+        var dy = -2;
+
+        //funzione che disegna la pallina in posizione x,y la faccio eseguire dalla funzione draw per essere più ordinato
+        function drawBall() {
+            ctx.beginPath();
+            ctx.arc(x, y, 10, 0, Math.PI * 2);
+            ctx.fillStyle = "#0095DD";
+            ctx.fill();
+            ctx.closePath();
+        }
+        function draw() {
+            //pulisco l'area del canvas a ogni riperizione della fx, così da vedere la pallina ce si muove, altrimenti vedrei una linea 
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawBall();
+            //ogni volta che la funzione si ripete la pallina si sposta, aggiorno x e y
+            x += dx;
+            y += dy;
+        }
+        setInterval(draw, 10) //la funzione viene ripetuta ogni 10 ms
+
     </script>
 
 </body>
