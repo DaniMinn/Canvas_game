@@ -26,23 +26,102 @@
         var dx = 2;
         var dy = -2;
 
+        //raggio della pallina, usato per sottrarlo e far rimbalzare la pallina sul bordo e non sul centro della pallina stessa
+        var ballRadius = 10;
+        var color = "#0095DD";
+
+        //paddle che muove il giocatore
+        var paddleHeight = 10;
+        var paddleWidth = 75;
+        //posizione iniziale del paddle
+        var paddleX = (canvas.width-paddleWidth)/2
+        //muovere il paddle
+        var rightPressed = false;
+        var leftPressed = false;
+
+
+
+
         //funzione che disegna la pallina in posizione x,y la faccio eseguire dalla funzione draw per essere più ordinato
         function drawBall() {
             ctx.beginPath();
-            ctx.arc(x, y, 10, 0, Math.PI * 2);
+            ctx.arc(x, y, ballRadius, 0, Math.PI * 2);
+            ctx.fillStyle = color;
+            ctx.fill();
+            ctx.closePath();
+        }
+
+        function drawPaddle(){
+            ctx.beginPath();
+            ctx.rect(paddleX, canvas.height-paddleHeight, paddleWidth, paddleHeight)
             ctx.fillStyle = "#0095DD";
             ctx.fill();
             ctx.closePath();
         }
+
         function draw() {
             //pulisco l'area del canvas a ogni riperizione della fx, così da vedere la pallina ce si muove, altrimenti vedrei una linea 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             drawBall();
+            drawPaddle();
             //ogni volta che la funzione si ripete la pallina si sposta, aggiorno x e y
             x += dx;
             y += dy;
+            
+            //aggiungo il rimbalzo: in alto a sinistra il canvas è zero
+            //rinbalzo sui lati sopra e sotto
+            if(y + dy > canvas.height-ballRadius || y + dy < ballRadius){
+                //quando la pallina raggiunge il lato, inverto dy, quindi se stavo sommando dy alla posizione y adesso dy verra sottratto e la direzione sarà opposta
+                dy = -dy;
+                //cambia colore quando rimbalza
+                color = '#'+Math.floor(Math.random()*16777215).toString(16);
+            }
+            //rimbalzo sui lati destra e sinistra
+            if(x + dx > canvas.width-ballRadius || x + dx < ballRadius ){
+                dx = -dx;
+                color = '#'+Math.floor(Math.random()*16777215).toString(16);
+            }
+
+            //movimento paddle 
+            if(rightPressed){
+                paddleX +=7; //il paddle si muove di +7px a destra
+                //evitiamo che il paddle esca dal canvas
+                if(paddleX + paddleWidth > canvas.width){
+                    paddleX =canvas.width - paddleWidth;
+                }
+            } else if (leftPressed) {
+                paddleX -= 7;
+                if(paddleX < 0){
+                    paddleX = 0;
+                }
+            }
         }
-        setInterval(draw, 10) //la funzione viene ripetuta ogni 10 ms
+
+        //aggiungo un evento, quando clicco su un tasto e quando rilascio il tasto vengono eseguite le funzioni keyDownHandler, keyUpHandler
+        document.addEventListener("keydown",keyDownHandler, false);
+        document.addEventListener("keyup", keyUpHandler, false);
+
+        function keyDownHandler(e){
+            //la funzione cambia il valore boleano se clicco sul tasto freccia destra
+            if(e.key == "Right" || e.key == "ArrowRight"){
+                rightPressed = true;
+            }
+            if(e.key == "Left" || e.key == "ArrowLeft"){
+                leftPressed = true;
+            }
+        }
+        function keyUpHandler(e) {
+                if (e.key == "Right" || e.key == "ArrowRight") {
+                    rightPressed = false;
+                }
+                else if (e.key == "Left" || e.key == "ArrowLeft") {
+                    leftPressed = false;
+                }
+            }
+
+        var interval = setInterval(draw, 10) //la funzione viene ripetuta ogni 10 ms
+
+        
 
     </script>
 
