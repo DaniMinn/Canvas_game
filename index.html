@@ -57,6 +57,7 @@
         }
 
         var score = 0;
+        var lives = 3;
 
 
 
@@ -106,6 +107,7 @@
             drawBricks();
             drawPaddle();
             drawScore();
+            drawLives();
             collisionDetection();
             //ogni volta che la funzione si ripete la pallina si sposta, aggiorno x e y
             x += dx;
@@ -123,9 +125,18 @@
                 if(x > paddleX && x < paddleX + paddleWidth){ //se colpisco il paddle la pallina rimbalza
                     dy = -dy;
                 } else{ //altrimenti game over
-                    alert("GAME OVER");
-                    document.location.reload() //ricarico la pagina
-                    clearInterval(interval);// Needed for Chrome to end game
+                    lives--;
+                    if(!lives){//se non ho più vite --> termina il gioco
+                        alert("GAME OVER");
+                        document.location.reload() //ricarico la pagina
+                        clearInterval(interval);// Needed for Chrome to end game
+                    } else{//reset gioco
+                        x = canvas.width / 2;
+                        y = canvas.height - 30;
+                        dx = 2;
+                        dy = -2;
+                        paddleX = (canvas.width - paddleWidth) / 2;
+                    }
                 }
             }
             //rimbalzo sui lati destra e sinistra
@@ -152,6 +163,8 @@
         //aggiungo un evento, quando clicco su un tasto e quando rilascio il tasto vengono eseguite le funzioni keyDownHandler, keyUpHandler
         document.addEventListener("keydown",keyDownHandler, false);
         document.addEventListener("keyup", keyUpHandler, false);
+        //movimento del paddle con mouse
+        document.addEventListener("mousemove", mouseMoveHandler, false);
 
         function keyDownHandler(e){
             //la funzione cambia il valore boleano se clicco sul tasto freccia destra
@@ -170,6 +183,15 @@
                     leftPressed = false;
                 }
             }
+        
+        function mouseMoveHandler(e){
+            //distanza tra mouse e lato sinistro del canvas
+            var relativeX = e.clientX -canvas.offsetLeft;
+            //se il mouse è dentro il canvas allora associo la posizione del paddle al mouse
+            if(relativeX > 0 && relativeX < canvas.width){
+                paddleX = relativeX -paddleWidth/2;
+            }
+        }
 
         var interval = setInterval(draw, 10) //la funzione viene ripetuta ogni 10 ms
 
@@ -198,9 +220,13 @@
         function drawScore(){
             ctx.font = "16px Arial";
             ctx.fillStyle = "green";
-            ctx.fillText("Score: "+score, 8, 10);
+            ctx.fillText("Score: "+score, 8, 18);
         }
-        
+        function drawLives() {
+                ctx.font = "16px Arial";
+                ctx.fillStyle = "red";
+                ctx.fillText("Lives: " + lives, canvas.width-65, 18);
+            }
 
     </script>
 
