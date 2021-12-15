@@ -23,8 +23,8 @@
         var x = canvas.width/2;
         var y = canvas.height-30;
         //variabili per aggiornare la posizione del disegno
-        var dx = 2;
-        var dy = -2;
+        var dx = 4;
+        var dy = -4;
 
         //raggio della pallina, usato per sottrarlo e far rimbalzare la pallina sul bordo e non sul centro della pallina stessa
         var ballRadius = 10;
@@ -129,12 +129,11 @@
                     if(!lives){//se non ho più vite --> termina il gioco
                         alert("GAME OVER");
                         document.location.reload() //ricarico la pagina
-                        clearInterval(interval);// Needed for Chrome to end game
                     } else{//reset gioco
                         x = canvas.width / 2;
                         y = canvas.height - 30;
-                        dx = 2;
-                        dy = -2;
+                        dx = 4;
+                        dy = -4;
                         paddleX = (canvas.width - paddleWidth) / 2;
                     }
                 }
@@ -158,6 +157,7 @@
                     paddleX = 0;
                 }
             }
+            requestAnimationFrame(draw);
         }
 
         //aggiungo un evento, quando clicco su un tasto e quando rilascio il tasto vengono eseguite le funzioni keyDownHandler, keyUpHandler
@@ -193,7 +193,7 @@
             }
         }
 
-        var interval = setInterval(draw, 10) //la funzione viene ripetuta ogni 10 ms
+        draw(); //la funzione viene ripetuta ogni 10 ms prima usavo setInterval, ora uso requestAnimationFrame dentro la funz
 
         //rivelo la collisione pallina-mattone
         function collisionDetection() {
@@ -208,7 +208,6 @@
                                 if(score == brickColumnCount*brickRowCount){
                                     alert("YOU WIN, CONGRATULATIONS!");
                                     document.location.reload();
-                                     clearInterval(interval); // Needed for Chrome to end game
                                 }
                             }
                         }
