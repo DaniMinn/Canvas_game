@@ -42,6 +42,7 @@
 
 
 
+
         //funzione che disegna la pallina in posizione x,y la faccio eseguire dalla funzione draw per essere più ordinato
         function drawBall() {
             ctx.beginPath();
@@ -70,11 +71,20 @@
             
             //aggiungo il rimbalzo: in alto a sinistra il canvas è zero
             //rinbalzo sui lati sopra e sotto
-            if(y + dy > canvas.height-ballRadius || y + dy < ballRadius){
+            if(y + dy < ballRadius){
                 //quando la pallina raggiunge il lato, inverto dy, quindi se stavo sommando dy alla posizione y adesso dy verra sottratto e la direzione sarà opposta
                 dy = -dy;
                 //cambia colore quando rimbalza
                 color = '#'+Math.floor(Math.random()*16777215).toString(16);
+            } else if(y + dy > canvas.height - ballRadius){ //se colpiso il lato basso
+                
+                if(x > paddleX && x < paddleX + paddleWidth){ //se colpisco il paddle la pallina rimbalza
+                    dy = -dy;
+                } else{ //altrimenti game over
+                    alert("GAME OVER");
+                    document.location.reload() //ricarico la pagina
+                    clearInterval(interval);// Needed for Chrome to end game
+                }
             }
             //rimbalzo sui lati destra e sinistra
             if(x + dx > canvas.width-ballRadius || x + dx < ballRadius ){
